@@ -38,7 +38,7 @@ int isCycle(Graph* g, int currentVertex, int startVertex);
 void printCycle(int* fullPath, int size);
 
 //funtion that solutes the Hamilton Cycle problem
-void HamiltonCycle(Graph* g, int* path, int* visited, int size, int vertex);
+void HamiltonCycle(Graph* g, int* path, int* visited, int size, int vertex, int* existCycle);
 
 //function to check if there's such a vertex in graph
 int doesVertexExist(Graph* g, int vertex);
