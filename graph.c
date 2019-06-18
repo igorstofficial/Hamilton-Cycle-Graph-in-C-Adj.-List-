@@ -315,7 +315,7 @@ void printCycle(Graph* g, int* fullPath, int size)
 {
 	printf("\nHamilton Cycle(x [weight] y): ");
 
-	for (int i = 0, j = 0; i < size; i++) {
+	for (int i = 0; i < size; i++) {
 		printf("%d ", fullPath[i]);
 
 		//if vertex is prelast - break
