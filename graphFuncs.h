@@ -34,8 +34,11 @@ void freeGraph(Graph* g);
 //function to checking if this Hamilton Path is Cycle or just a path
 int isCycle(Graph* g, int currentVertex, int startVertex);
 
+//function to return edge's weight
+int getWeight(Graph* g, int startVertex, int endVertex);
+
 //funtion to print Hamilton Cycle
-void printCycle(int* fullPath, int size);
+void printCycle(Graph* g, int* fullPath, int size);
 
 //funtion that solutes the Hamilton Cycle problem
 void HamiltonCycle(Graph* g, int* path, int* visited, int size, int vertex, int* existCycle);

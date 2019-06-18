@@ -78,6 +78,8 @@ int inputGraph(Graph* g)
 	default:
 		return 0;
 	}
+
+	return 1;
 }
 
 //funtion to initialize the graph from the file, returns 1 if successful, otherwise - 0
@@ -292,27 +294,54 @@ int isCycle(Graph* g, int currentVertex, int startVertex)
 	return isCycle;
 }
 
-//funtion to print Hamilton Cycle
-void printCycle(int* fullPath, int size)
+//function to return edge's weight
+int getWeight(Graph* g, int startVertex, int endVertex)
 {
-	printf("\nHamilton Cycle: ");
+	EdgeNode* temp = g->edges[startVertex]; //temporary pointer
 
-	for (int i = 0; i < size; i++) {
-		printf("%d ", fullPath[i]);
+	//while has connected vertices
+	while (temp != NULL) {
+		if (temp->end == endVertex) //if vertex is the same - break
+			break;
+		else temp = temp->next;
 	}
 
+	return temp->weight; 
+
+}
+
+//funtion to print Hamilton Cycle
+void printCycle(Graph* g, int* fullPath, int size)
+{
+	printf("\nHamilton Cycle(x [weight] y): ");
+
+	for (int i = 0, j = 0; i < size; i++) {
+		printf("%d ", fullPath[i]);
+
+		//if vertex is prelast - break
+		if (i == size - 1)
+			break;
+
+		//print weight between current and next vertex
+		printf("[%d] ", getWeight(g, fullPath[i], fullPath[i + 1]));
+	}
+
+	//print weight between prelast and last vertex
+	printf("[%d] ", getWeight(g, fullPath[size - 1], fullPath[0]));
+
+	//print last vertex
 	printf("%d\n", fullPath[0]);
 }
 
 //funtion that solutes the Hamilton Cycle problem
 void HamiltonCycle(Graph* g, int* path, int* visited, int size, int vertex, int* existCycle)
 {
-	static unsigned counter = 1; //counter of visited vertices
+	static unsigned counter = 1, wght = 0; //counter of visited vertices, added weights
 
 	//base for recurtion
 	if (counter == size) { //if all the vertices are visited
 		if (isCycle(g, vertex, path[0])) { //check if this is cycle
-			printCycle(path, size); *existCycle = 1;//cycle found
+			printCycle(g, path, size); *existCycle = 1;//cycle found
 			return;
 		}
 
@@ -335,12 +364,12 @@ void HamiltonCycle(Graph* g, int* path, int* visited, int size, int vertex, int*
 			//backtracking
 			visited[i] = 0; //if it didn't lead to cycle, deleting the last vertex from visited
 			path[--counter] = -1; // and decreasing the path's counter
-
 		}
 
 	}
 
 }
+
 
 //function to check if there's such a vertex in graph
 int doesVertexExist(Graph* g, int vertex)
