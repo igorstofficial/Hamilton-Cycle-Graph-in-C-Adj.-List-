@@ -58,16 +58,14 @@ int inputGraph(Graph* g)
 	//choosing input variant on base of modeNumber's value
 	switch (modeNumber) {
 	case 1: //keyboard input
-		readGraph(g); return 1; break;
+		readGraph(g); return 1; 
 	case 2:
 		if (!readGraphFromFile(g)) //file input
 			return 0;
-		break;
+		return 1;
 	default:
 		return 0;
 	}
-
-	return 1;
 }
 
 //funtion to initialize the graph from the file, returns 1 if successful, otherwise - 0
@@ -101,11 +99,11 @@ int readGraphFromFile(Graph* g)
 
 	initializeGraph(g, isDirected, verticesAmount); //initializing empty graph
 
-	int buffer[3]; //array to hold vertices of one Edge of the graph from file and weight between them
+	int* buffer = (int*)malloc(sizeof(int) * 3); //array to hold vertices of one Edge of the graph from file and weight between them
 	int inputAttempts = 4; //variable to control attempts of inputing file's name
 
 	FILE* file;
-	char fileName[100]; //array to hold file's name
+	char* fileName = (char*)malloc(sizeof(char)*200); //array to hold file's name
 
 	printf("\nPlease enter the file name and way to it(if needed): ");
 	getchar();
@@ -135,16 +133,15 @@ int readGraphFromFile(Graph* g)
 		if (fscanf_s(file, "%d %d %d", &buffer[0], &buffer[1], &buffer[2]) != 3 && !feof(file)) {
 			printf("\nThere are some invalid data in file, correct it!"); break;
 		}
-		else if (feof(file)) { //counting vertices amount if input is over
-			for (int i = 0; i < g->size; i++) {
-				if (g->edges[i] != NULL)
-					g->verticesAmount++;
-			}
+		else if (feof(file)) { //exit
 			break;
 		}
 		else //if reading was OK, initializing the edge with nums
 			insertEdge(g, buffer[0], buffer[1], buffer[2], isDirected);
 	}
+
+	free(fileName);//deleting allocated memory for File Name
+	free(buffer);
 
 	if (isConnected(g)) //checking if graph is connected
 		return 1; //indicator of completed input
@@ -160,18 +157,23 @@ void initializeGraph(Graph *g, int isDirected, int size)
 	int counter; //variable to go through the graph
 
 	g->verticesAmount = 0;
-	g->edges = (EdgeNode**)malloc(sizeof(EdgeNode*) * size);
+	g->edges = (EdgeNode**)malloc(sizeof(EdgeNode*) * size);//allocation memory for list
 	g->size = size;
 	g->isDirected = isDirected;
 	for (counter = 0; counter < size; counter++) g->edges[counter] = NULL;
 }
 
+//check if graph is directed
+int isDirected(Graph* g)
+{
+	return g->isDirected;
+}
+
 //initializing the edge of the graph
 void insertEdge(Graph *g, int x, int y, int weight, int isDirected)
 {
-	static int verticesAmount = 0;//counter to chech how many edges were added to control the memory reallocation 
 
-	if (verticesAmount == g->size) { //reallocation in case of full graph
+	if (g->verticesAmount == g->size) { //reallocation in case of full graph
 		EdgeNode** newEdges = (EdgeNode**)malloc(sizeof(EdgeNode*) * g->size * 2); // creating new List
 
 		for (int i = 0; i < g->size; i++) //copying existing data
@@ -187,7 +189,7 @@ void insertEdge(Graph *g, int x, int y, int weight, int isDirected)
 	}
 
 	//checking if there's already vertex [X]
-	for (int i = 0; i < verticesAmount; i++) {
+	for (int i = 0; i < g->verticesAmount; i++) {
 
 		if (g->edges[i]->x == x) {
 			EdgeNode* tail = g->edges[i];
@@ -238,7 +240,7 @@ void insertEdge(Graph *g, int x, int y, int weight, int isDirected)
 	temp->y = y;
 	temp->next = NULL;
 
-	g->edges[verticesAmount++] = temp;
+	g->edges[g->verticesAmount++] = temp;
 
 	//if undirected - add antagonic [Y-X] edge
 	if (!isDirected) {
@@ -295,11 +297,7 @@ void readGraph(Graph *g)
 
 			if (x != -1 && y != -1 && weight != -1) //if everything's OK - initialize the edge
 				insertEdge(g, x, y, weight, isDirected);
-			else { //exit - counting vertices
-				for (int i = 0; i < g->size; i++) {
-					if (g->edges[i] != NULL)
-						g->verticesAmount++;
-				}
+			else { //exit
 				break; //breaking the cycle
 			}
 		}

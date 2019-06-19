@@ -12,6 +12,9 @@ typedef struct {
 	int size;//amount of vertices given by user
 }Graph; // structure for the whole Graph
 
+//check if graph is directed
+int isDirected(Graph* g);
+
 //function to check if vertex is visited
 int isVisited(int* visited, int vertex, int size);
 
