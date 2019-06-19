@@ -1,23 +1,28 @@
-#define MAX 300 // max amount of vertices
-
 typedef struct {
-	int end;//endination
+	int x;//start point
+	int y;//endination ( x -> y. y is endination)
 	int weight;//edge weight
 	struct EdgeNode* next;//pointer to vertex that is connected with current
 }EdgeNode; // structure for one Edge
 
 typedef struct {
-	EdgeNode* edges[MAX];//adjacency list
-	int verticesAmount;//amount of vertices
-	int edgesAmount;//amount of edges
+	EdgeNode** edges;//adjacency list
 	int isDirected;//is directed, 0 - no, 1 - yes
+	int verticesAmount;//actual vertices amount
+	int size;//amount of vertices given by user
 }Graph; // structure for the whole Graph
+
+//function to check if vertex is visited
+int isVisited(int* visited, int vertex, int size);
+
+//func to return pointer to vertex X
+EdgeNode* getVertex(Graph* g, int vertex);
 
 //function to choose the variant of graph's initialization
 int inputGraph(Graph* g);
 
 //initializing an empty graph
-void initializeGraph(Graph *g, int isDirected);
+void initializeGraph(Graph *g, int isDirected, int size);
 
 //initializing the edge of the graph
 void insertEdge(Graph *g, int x, int y, int weight, int isDirected);
@@ -53,7 +58,7 @@ void findHamiltonCycle(Graph* g);
 int readGraphFromFile(Graph* g);
 
 //function to solute graph connection problem
-void connectivity(Graph* g, int vertex, int* visited);
+void connectivity(Graph* g, int vertex, int* visited, int size);
 
 //function to show if graph is connected
 int isConnected(Graph* g);
